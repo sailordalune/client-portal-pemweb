@@ -32,14 +32,20 @@
                     </div>
                 </div>
 
-                <!-- Tasks Done -->
+                <!-- Completed Projects -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow duration-300">
                     <div class="p-3 bg-sky-50 text-sky-600 rounded-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-slate-500">Tugas Selesai</p>
-                        <p class="text-2xl font-bold text-slate-800">{{ $totalTasksDone }} <span class="text-sm text-slate-400 font-normal">/ {{ $totalTasks }}</span></p>
+                        <p class="text-sm font-medium text-slate-500">Proyek Selesai</p>
+                        <p class="text-2xl font-bold text-slate-800">
+                            @if($totalProjects > 0)
+                                {{ $completedProjects }} <span class="text-sm text-slate-400 font-normal">/ {{ $totalProjects }}</span>
+                            @else
+                                0 <span class="text-sm text-slate-400 font-normal">Proyek</span>
+                            @endif
+                        </p>
                     </div>
                 </div>
 

@@ -14,19 +14,19 @@ class DashboardController extends Controller
         $user = $request->user();
 
         if ($user->isAdmin()) {
-            $totalProjects   = Project::count();
-            $totalTasksDone  = Task::where('status', 'done')->count();
-            $totalTasks      = Task::count();
-            $totalInvoices   = Invoice::count();
-            $totalUnpaid     = Invoice::where('status', 'unpaid')->sum('amount');
-            $totalPaid       = Invoice::where('status', 'paid')->sum('amount');
-            $avgProgress     = round((float) Project::with('progressReports')->get()
+            $totalProjects     = Project::count();
+            $totalTasks        = Task::count();
+            $completedProjects = Project::where('status', 'completed')->count();
+            $totalInvoices     = Invoice::count();
+            $totalUnpaid       = Invoice::where('status', 'unpaid')->sum('amount');
+            $totalPaid         = Invoice::where('status', 'paid')->sum('amount');
+            $avgProgress       = round((float) Project::with('progressReports')->get()
                 ->avg(fn ($p) => $p->latestProgress()), 1);
 
             $recentProjects = Project::with('client')->latest()->take(5)->get();
 
             return view('dashboard.admin', compact(
-                'totalProjects', 'totalTasksDone', 'totalTasks',
+                'totalProjects', 'completedProjects',
                 'totalInvoices', 'totalUnpaid', 'totalPaid', 'avgProgress', 'recentProjects'
             ));
         }
@@ -35,12 +35,12 @@ class DashboardController extends Controller
         $client = $user->client;
         $projectIds = $client?->projects()->pluck('id') ?? collect();
 
-        $totalProjects  = $projectIds->count();
-        $totalTasksDone = Task::whereIn('project_id', $projectIds)->where('status', 'done')->count();
-        $totalTasks     = Task::whereIn('project_id', $projectIds)->count();
-        $totalInvoices  = Invoice::whereIn('project_id', $projectIds)->count();
-        $totalUnpaid    = Invoice::whereIn('project_id', $projectIds)->where('status', 'unpaid')->sum('amount');
-        $totalPaid      = Invoice::whereIn('project_id', $projectIds)->where('status', 'paid')->sum('amount');
+        $totalProjects     = $projectIds->count();
+        $totalTasksDone    = Project::whereIn('id', $projectIds)->where('status', 'completed')->count();
+        $totalTasks        = Task::whereIn('project_id', $projectIds) -> count();
+        $totalInvoices     = Invoice::whereIn('project_id', $projectIds)->count();
+        $totalUnpaid       = Invoice::whereIn('project_id', $projectIds)->where('status', 'unpaid')->sum('amount');
+        $totalPaid         = Invoice::whereIn('project_id', $projectIds)->where('status', 'paid')->sum('amount');
 
         $myProjects = $client
             ? $client->projects()->with('progressReports')->latest()->get()
